@@ -282,7 +282,7 @@ function App() {
                     required
                   />
                   <Box m={2}>
-                    <Button type="submit">Submit</Button>
+                    <Button type="submit">Buy</Button>
                   </Box>
                   
                 </Center>
