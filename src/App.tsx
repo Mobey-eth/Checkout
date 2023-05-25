@@ -96,7 +96,48 @@ function App() {
     setEmail(e.target.value);
   };
 
-  function importOptions(userEmail: string){
+  function importOptions(userEmail: string, discount: number){
+    // Use this logic to Implement the student and company discount
+    /*
+      const quantity: number = 1;
+      let priceInEth: number = 0.1 * quantity;
+      if (discountValue === 20 || discountValue === 30 ) {
+        priceInEth -= (discountValue / 100) * priceInEth;
+
+        const userOptions = {
+          method: "POST",
+          url: "http://localhost:5000/api/verifyEmail",
+          headers: {
+            accept: "application/json",
+            "content-type": "application/json",
+            Authorization: "Bearer f38fd6a4-8ff0-47c2-a40c-e94e39fb80c7",
+          },
+          data: {
+            userEmail,
+            mintMethod: {
+                name: 'claimTo',
+                args: {_to: '$WALLET', _quantity: quantity, _tokenId: 0},
+                payment: {currency: 'MATIC', value: priceInEth}
+              },
+          },
+        };
+        return userOptions;
+      } else {
+        const userOptions = {
+          method: "POST",
+          url: "http://localhost:5000/api/verifyEmail",
+          headers: {
+            accept: "application/json",
+            "content-type": "application/json",
+            Authorization: "Bearer f38fd6a4-8ff0-47c2-a40c-e94e39fb80c7",
+          },
+          data: {
+            userEmail,
+          },
+        };
+        return userOptions;
+      }
+    */
     const userOptions = {
       method: "POST",
       url: "http://localhost:5000/api/verifyEmail",
@@ -113,10 +154,12 @@ function App() {
   }
 
   async function handleCheckout(_email: string): Promise<void> {
+    let discountValue = 0;
     const domain: string = _email.split('@')[1];
     if (domain.endsWith('edu.com')) {
       console.log('Email domain is a valid student .edu domain. Sending request...');
-        const options = importOptions(_email)
+      discountValue = 20; // 20% student discount
+        const options = importOptions(_email, discountValue);
         axios
         .request(options)
         .then(function (response) {
@@ -134,7 +177,7 @@ function App() {
     } else if (domain.endsWith('gmail.com')) {
       console.log('Email domain is a valid personal domain. Sending request...');
       // Proceed with request
-      const options = importOptions(_email)
+      const options = importOptions(_email, discountValue)
         axios
         .request(options)
         .then(function (response) {
@@ -158,7 +201,8 @@ function App() {
     } else {
       console.log('Email domain is a valid company domain. Sending request...');
       // Proceed with request
-      const options = importOptions(_email)
+      discountValue = 30; // 30% company discount
+      const options = importOptions(_email, discountValue);
         axios
         .request(options)
         .then(function (response) {
