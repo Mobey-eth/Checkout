@@ -23,7 +23,10 @@ import {
   DrawerCloseButton,
   Radio,
   RadioGroup,
+  Input,
+  Center
 } from "@chakra-ui/react";
+import { HamburgerIcon } from '@chakra-ui/icons'
 import { useDisclosure } from "@chakra-ui/react";
 // import { Radio, RadioGroup } from '@chakra-ui/react'
 import {
@@ -163,70 +166,51 @@ function App() {
         ) : userDetails.status === UserStatus.LOGGED_OUT ? (
           <Login paper={paper} onLoginSuccess={fetchUserStatus} />
         ) : (
-          <>
-            <>
-              <Button colorScheme="blue" onClick={onOpen}>
-                Open
+          <><>
+      
+          <Button colorScheme='blue' onClick={onOpen}>
+            <HamburgerIcon/>
+          </Button>
+          <Drawer onClose={onClose} isOpen={isOpen}>
+            <DrawerOverlay />
+            <DrawerContent>
+              <DrawerHeader borderBottomWidth='1px'>Menu</DrawerHeader>
+              <DrawerBody>
+              <Button colorScheme='blue' variant='solid'>
+                Sign In
+              </Button>  
+              <Button colorScheme='blue' variant='solid'>
+                checkout
               </Button>
-              <Drawer onClose={onClose} isOpen={isOpen}>
-                <DrawerOverlay />
-                <DrawerContent>
-                  <DrawerHeader borderBottomWidth="1px">Menu</DrawerHeader>
-                  <DrawerBody>
-                    <Button colorScheme="blue" variant="solid">
-                      Sign In
-                    </Button>
-                    <Button colorScheme="blue" variant="solid">
-                      checkout
-                    </Button>
-                    {/* <Button className="color-blue" onClick={openCheckout}>Buy with Paper</Button> */}
-                  </DrawerBody>
-                </DrawerContent>
-              </Drawer>
-            </>
-            <SimpleGrid columns={2}>
-              <Box p={10} height="100vh">
-                <Stack spacing={10}>
-                  <Image src="/paper-logo-icon.svg" maxW={14} alt="logo" />
-                  <Stack spacing={0}>
-                    <Heading>Wallets & Auth demo</Heading>
-                    <Text size="sm" fontStyle="italic" color="gray.500">
-                      by Paper
-                    </Text>
-                  </Stack>
-                  <Text maxW={400}>
-                    Welcome to Paper's Embedded Wallet Service (EWS) Alpha
-                    Sample App.
-                    <br />
-                    <br />
-                    With this alpha sample app, you can explore the various
-                    features of our EWS platform and get a feel for how it can
-                    benefit your own project
-                  </Text>
-                </Stack>
-              </Box>
-              <Stack spacing={10}>
-                <WalletInfo
-                  email={userDetails.authDetails.email}
-                  walletAddress={userDetails.walletAddress}
-                />
-                <WalletFeatures
-                  user={
-                    userDetails.status ===
-                    UserStatus.LOGGED_IN_WALLET_INITIALIZED
-                      ? userDetails
-                      : undefined
-                  }
-                />
+                {/* <Button className="color-blue" onClick={openCheckout}>Buy with Paper</Button> */}
+              </DrawerBody>
+            </DrawerContent>
+          </Drawer>
+        </>
+          <SimpleGrid columns={2}>
+          <Box p={10} height="100vh">
+          <Stack spacing={10}>
+          <Image src="/paper-logo-icon.svg" maxW={14} alt="logo" />
+          <Stack spacing={0}>
+            <Heading>Wallets & Auth demo</Heading>
+            <Text size="sm" fontStyle="italic" color="gray.500">
+              by Paper
+            </Text>
+          </Stack>
+          <Text maxW={400}>
+            Welcome to Paper's Embedded Wallet Service (EWS) Alpha Sample App.
+            <br />
+            <br />
+            With this alpha sample app, you can explore the various features of
+            our EWS platform and get a feel for how it can benefit your own
+            project
+          </Text>
+          
+          <form onSubmit={handleSubmit}>
 
-                <form onSubmit={handleSubmit}>
-                  {/* 
-                  I also think you should style this form too o, look at the components above and 
-                  use them to style this form, the Box, Stack, there should be a FormInput and a Button component too
-                  Use them instead of making the form look plain.
-                  */}
-                  <label htmlFor="email">Email:</label>
-                  <input
+                <Center>
+                  <Input 
+                    width="60%"
                     type="email"
                     id="email"
                     value={_email}
@@ -234,10 +218,28 @@ function App() {
                     placeholder="Enter your email"
                     required
                   />
-                  <button type="submit">Submit</button>
-                </form>
-              </Stack>
-            </SimpleGrid>
+                  <Box m={2}>
+                    <Button type="submit">Submit</Button>
+                  </Box>
+                  
+                </Center>
+          </form>
+        </Stack>
+      </Box>
+      <Stack spacing={10} >
+            <WalletInfo
+              email={userDetails.authDetails.email}
+              walletAddress={userDetails.walletAddress}
+            />
+            <WalletFeatures
+              user={
+                userDetails.status === UserStatus.LOGGED_IN_WALLET_INITIALIZED
+                  ? userDetails
+                  : undefined
+              }
+            />
+          </Stack>
+          </SimpleGrid>
           </>
         )}
         {!!userDetails && userDetails.status !== UserStatus.LOGGED_OUT && (
@@ -256,3 +258,5 @@ function App() {
 }
 
 export default App;
+
+// MT
