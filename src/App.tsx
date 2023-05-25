@@ -101,8 +101,8 @@ function App() {
     /*
       const quantity: number = 1;
       let priceInEth: number = 0.1 * quantity;
-      if (discountValue === 20 || discountValue === 30 ) {
-        priceInEth -= (discountValue / 100) * priceInEth;
+      if (discount === 20 || discount === 30 ) {
+        priceInEth -= (discount / 100) * priceInEth;
 
         const userOptions = {
           method: "POST",
@@ -135,7 +135,7 @@ function App() {
             userEmail,
           },
         };
-        return userOptions;
+      return userOptions;
       }
     */
     const userOptions = {
