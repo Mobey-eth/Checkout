@@ -98,7 +98,7 @@ function App() {
 
   function importOptions(userEmail: string, discount: number){
     // Use this logic to Implement the student and company discount
-    /*
+    
       const quantity: number = 1;
       let priceInEth: number = 0.1 * quantity;
       if (discount === 20 || discount === 30 ) {
@@ -137,20 +137,21 @@ function App() {
         };
       return userOptions;
       }
-    */
-    const userOptions = {
-      method: "POST",
-      url: "http://localhost:5000/api/verifyEmail",
-      headers: {
-        accept: "application/json",
-        "content-type": "application/json",
-        Authorization: "Bearer f38fd6a4-8ff0-47c2-a40c-e94e39fb80c7",
-      },
-      data: {
-        userEmail,
-      },
-    };
-    return userOptions;
+    // checkpoint 
+    
+    // const userOptions = {
+    //   method: "POST",
+    //   url: "http://localhost:5000/api/verifyEmail",
+    //   headers: {
+    //     accept: "application/json",
+    //     "content-type": "application/json",
+    //     Authorization: "Bearer f38fd6a4-8ff0-47c2-a40c-e94e39fb80c7",
+    //   },
+    //   data: {
+    //     userEmail,
+    //   },
+    // };
+    // return userOptions;
   }
 
   async function handleCheckout(_email: string): Promise<void> {
