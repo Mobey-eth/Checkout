@@ -96,18 +96,8 @@ function App() {
     setEmail(e.target.value);
   };
 
-  async function handleCheckout(_email: string): Promise<void> {
-    // try {
-    //   const domain: string = _email.split('@')[1];
-    //   console.log(domain);
-
-    // if (domain.endsWith('edu.com')) {
-
-    //Mobi, please check here and call your if else check here and when you are done, 
-    //copy the code and paste it in the document
-    console.log("Email domain is a valid .edu domain. Sending request...");
-
-    const options = {
+  function importOptions(userEmail: string){
+    const userOptions = {
       method: "POST",
       url: "http://localhost:5000/api/verifyEmail",
       headers: {
@@ -116,31 +106,74 @@ function App() {
         Authorization: "Bearer f38fd6a4-8ff0-47c2-a40c-e94e39fb80c7",
       },
       data: {
-        _email,
+        userEmail,
       },
     };
-    axios
-      .request(options)
-      .then(function (response) {
-        console.log(response.data);
-        const openCheckout = () =>
-          renderPaperCheckoutLink({
-            checkoutLinkUrl: response.data.checkoutLinkIntentUrl,
-          });
-        openCheckout();
-      })
-      .catch(function (error) {
-        console.error(error);
-      });
+    return userOptions;
+  }
 
-    // } else {
-    //   console.log('Email domain is not a valid .edu domain. Request not sent.');
-    //   // Handle the case when the email is not a valid student email
-    // }
-    // } catch (error) {
-    //   console.error('Error occurred during email verification:', error);
-    //   // Handle any errors that occur during the verification process
-    // }
+  async function handleCheckout(_email: string): Promise<void> {
+    const domain: string = _email.split('@')[1];
+    if (domain.endsWith('edu.com')) {
+      console.log('Email domain is a valid student .edu domain. Sending request...');
+        const options = importOptions(_email)
+        axios
+        .request(options)
+        .then(function (response) {
+            console.log(response.data);
+            const openCheckout = () =>
+            renderPaperCheckoutLink({
+                checkoutLinkUrl: response.data.checkoutLinkIntentUrl,
+            });
+            openCheckout();
+        })
+        .catch(function (error) {
+            console.error(error);
+        });
+      
+    } else if (domain.endsWith('gmail.com')) {
+      console.log('Email domain is a valid personal domain. Sending request...');
+      // Proceed with request
+      const options = importOptions(_email)
+        axios
+        .request(options)
+        .then(function (response) {
+            console.log(response.data);
+            const openCheckout = () =>
+            renderPaperCheckoutLink({
+                checkoutLinkUrl: response.data.checkoutLinkIntentUrl,
+            });
+            openCheckout();
+        })
+        .catch(function (error) {
+            console.error(error);
+        });
+      
+    } else if (domain.endsWith('icloud.com') || domain.endsWith('outlook.com')) {
+        console.log('Email domain is not a valid student or company domain. Request not sent.');
+        // Handle the case when the email is neither a valid student nor a valid company email
+        alert("You're not on the allowlist and cannot buy the NFT.");
+        return; // Stop further processing
+    
+    } else {
+      console.log('Email domain is a valid company domain. Sending request...');
+      // Proceed with request
+      const options = importOptions(_email)
+        axios
+        .request(options)
+        .then(function (response) {
+            console.log(response.data);
+            const openCheckout = () =>
+            renderPaperCheckoutLink({
+                checkoutLinkUrl: response.data.checkoutLinkIntentUrl,
+            });
+            openCheckout();
+        })
+        .catch(function (error) {
+            console.error(error);
+        });
+    } 
+    
   }
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [placement, setPlacement] = useState("right");
