@@ -9,7 +9,8 @@ import {
   Heading,
   Input,
   Stack,
-  Text
+  Text,
+  Center
 } from "@chakra-ui/react";
 import { PaperEmbeddedWalletSdk } from "@paperxyz/embedded-wallet-service-sdk";
 import { useState } from "react";
@@ -110,141 +111,145 @@ export const Login: React.FC<Props> = ({ paper, onLoginSuccess }) => {
   };
 
   return (
-    <Card bg="white" borderRadius={8}>
-      <CardBody>
-        <Heading size="md">Log in</Heading>
-        <Divider my={4} />
-        <Button colorScheme="blue" onClick={loginWithPaperModal} w="full">
-          Login with Paper Modal
-        </Button>
 
-        <Flex my={4} alignItems="center">
-          <Divider />
-          <Text mx={4}>or</Text>
-          <Divider />
-        </Flex>
-        <Stack as="form">
-          <FormControl as={Stack}>
-            <Input
-              type="email"
-              placeholder="you@example.com"
-              value={email || ""}
-              onChange={(e) => {
-                setEmail(e.target.value);
-              }}
-            />
-          </FormControl>
-          <Button
-            type="submit"
-            onClick={loginWithPaperEmailOtp}
-            disabled={!email}
-            isLoading={isLoading}
-          >
-            Login with Email OTP
+    <Center>
+        <Card width="70%" bg="white" borderRadius={8}>
+        <CardBody>
+          <Heading size="md">Log in</Heading>
+          <Divider my={4} />
+          <Button colorScheme="blue" onClick={loginWithPaperModal} w="full">
+            Login with Paper Modal
           </Button>
-        </Stack>
 
-        {/* Adding code to allow internal full headless flow */}
-        {(email?.endsWith("@withpaper.com") ?? false) && (
-          <>
-            <Flex my={4} alignItems="center">
-              <Divider />
-              <Text mx={4}>or</Text>
-              <Divider />
-            </Flex>
-            <Stack as="form">
-              {sendEmailOtpResult ? (
-                <>
-                  <FormControl as={Stack} isInvalid={!!verifyOtpErrorMessage}>
-                    <Input
-                      type="text"
-                      inputMode="decimal"
-                      placeholder="Otp Code"
-                      value={otpCode || ""}
-                      onChange={(e) => {
-                        setOtpCode(e.target.value);
-                      }}
-                    />
-                    {!!verifyOtpErrorMessage &&
-                      sendEmailOtpResult.isNewUser && (
-                        <FormErrorMessage>
-                          {verifyOtpErrorMessage}
-                        </FormErrorMessage>
-                      )}
-                  </FormControl>
-                  {sendEmailOtpResult.isNewDevice ? (
+          <Flex my={4} alignItems="center">
+            <Divider />
+            <Text mx={4}>or</Text>
+            <Divider />
+          </Flex>
+          <Stack as="form">
+            <FormControl as={Stack}>
+              <Input
+                type="email"
+                placeholder="you@example.com"
+                value={email || ""}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                }}
+              />
+            </FormControl>
+            <Button
+              type="submit"
+              onClick={loginWithPaperEmailOtp}
+              disabled={!email}
+              isLoading={isLoading}
+            >
+              Login with Email OTP
+            </Button>
+          </Stack>
+
+          {/* Adding code to allow internal full headless flow */}
+          {(email?.endsWith("@withpaper.com") ?? false) && (
+            <>
+              <Flex my={4} alignItems="center">
+                <Divider />
+                <Text mx={4}>or</Text>
+                <Divider />
+              </Flex>
+              <Stack as="form">
+                {sendEmailOtpResult ? (
+                  <>
                     <FormControl as={Stack} isInvalid={!!verifyOtpErrorMessage}>
                       <Input
-                        type="password"
-                        placeholder="Recovery Code"
-                        value={recoveryCode || ""}
+                        type="text"
+                        inputMode="decimal"
+                        placeholder="Otp Code"
+                        value={otpCode || ""}
                         onChange={(e) => {
-                          setRecoveryCode(e.target.value);
+                          setOtpCode(e.target.value);
                         }}
                       />
-                      {!!verifyOtpErrorMessage && (
-                        <FormErrorMessage>
-                          {verifyOtpErrorMessage}
-                        </FormErrorMessage>
+                      {!!verifyOtpErrorMessage &&
+                        sendEmailOtpResult.isNewUser && (
+                          <FormErrorMessage>
+                            {verifyOtpErrorMessage}
+                          </FormErrorMessage>
+                        )}
+                    </FormControl>
+                    {sendEmailOtpResult.isNewDevice ? (
+                      <FormControl as={Stack} isInvalid={!!verifyOtpErrorMessage}>
+                        <Input
+                          type="password"
+                          placeholder="Recovery Code"
+                          value={recoveryCode || ""}
+                          onChange={(e) => {
+                            setRecoveryCode(e.target.value);
+                          }}
+                        />
+                        {!!verifyOtpErrorMessage && (
+                          <FormErrorMessage>
+                            {verifyOtpErrorMessage}
+                          </FormErrorMessage>
+                        )}
+                      </FormControl>
+                    ) : null}
+                    <Button
+                      type="submit"
+                      onClick={finishHeadlessOtpLogin}
+                      disabled={!email || !otpCode}
+                      isLoading={isLoading}
+                    >
+                      verify and finish headless login
+                    </Button>
+                    <Button
+                      onClick={loginWithPaperEmailOtpHeadless}
+                      variant="ghost"
+                      size="sm"
+                    >
+                      Request New Code
+                    </Button>
+                    <Button
+                      variant={"ghost"}
+                      w="fit-content"
+                      onClick={() => {
+                        setOtpCode("");
+                        setRecoveryCode("");
+                        setSendEmailOtpResult(undefined);
+                      }}
+                    >
+                      Back
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <FormControl as={Stack} isInvalid={!!sendOtpErrorMessage}>
+                      <Input
+                        type="email"
+                        placeholder="you@example.com"
+                        value={email || ""}
+                        onChange={(e) => {
+                          setEmail(e.target.value);
+                        }}
+                      />
+                      {!!sendOtpErrorMessage && (
+                        <FormErrorMessage>{sendOtpErrorMessage}</FormErrorMessage>
                       )}
                     </FormControl>
-                  ) : null}
-                  <Button
-                    type="submit"
-                    onClick={finishHeadlessOtpLogin}
-                    disabled={!email || !otpCode}
-                    isLoading={isLoading}
-                  >
-                    verify and finish headless login
-                  </Button>
-                  <Button
-                    onClick={loginWithPaperEmailOtpHeadless}
-                    variant="ghost"
-                    size="sm"
-                  >
-                    Request New Code
-                  </Button>
-                  <Button
-                    variant={"ghost"}
-                    w="fit-content"
-                    onClick={() => {
-                      setOtpCode("");
-                      setRecoveryCode("");
-                      setSendEmailOtpResult(undefined);
-                    }}
-                  >
-                    Back
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <FormControl as={Stack} isInvalid={!!sendOtpErrorMessage}>
-                    <Input
-                      type="email"
-                      placeholder="you@example.com"
-                      value={email || ""}
-                      onChange={(e) => {
-                        setEmail(e.target.value);
-                      }}
-                    />
-                    {!!sendOtpErrorMessage && (
-                      <FormErrorMessage>{sendOtpErrorMessage}</FormErrorMessage>
-                    )}
-                  </FormControl>
-                  <Button
-                    type="submit"
-                    onClick={loginWithPaperEmailOtpHeadless}
-                    disabled={!email}
-                    isLoading={isLoading}
-                  >
-                    send headless Email OTP
-                  </Button>
-                </>
-              )}
-            </Stack>
-          </>
-        )}
-      </CardBody>
-    </Card>
+                    <Button
+                      type="submit"
+                      onClick={loginWithPaperEmailOtpHeadless}
+                      disabled={!email}
+                      isLoading={isLoading}
+                    >
+                      send headless Email OTP
+                    </Button>
+                  </>
+                )}
+              </Stack>
+            </>
+          )}
+        </CardBody>
+      </Card>
+    </Center>
+    
   );
 };

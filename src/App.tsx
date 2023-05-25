@@ -203,7 +203,7 @@ function App() {
 
                 <Center>
                   <Input 
-                    width="60%"
+                    width="85%"
                     type="email"
                     id="email"
                     value={_email}
