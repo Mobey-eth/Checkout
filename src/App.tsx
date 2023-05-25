@@ -99,59 +99,44 @@ function App() {
   function importOptions(userEmail: string, discount: number){
     // Use this logic to Implement the student and company discount
     
-      const quantity: number = 1;
-      let priceInEth: number = 0.1 * quantity;
-      if (discount === 20 || discount === 30 ) {
-        priceInEth -= (discount / 100) * priceInEth;
+    const quantity: number = 1;
+    let priceInEth: number = 0.0 * quantity;
+    if (discount === 20 || discount === 30 ) {
+      priceInEth -= (discount / 100) * priceInEth;
 
-        const userOptions = {
-          method: "POST",
-          url: "http://localhost:5000/api/verifyEmail",
-          headers: {
-            accept: "application/json",
-            "content-type": "application/json",
-            Authorization: "Bearer f38fd6a4-8ff0-47c2-a40c-e94e39fb80c7",
-          },
-          data: {
-            userEmail,
-            mintMethod: {
-                name: 'claimTo',
-                args: {_to: '$WALLET', _quantity: quantity, _tokenId: 0},
-                payment: {currency: 'MATIC', value: priceInEth}
-              },
-          },
-        };
-        return userOptions;
-      } else {
-        const userOptions = {
-          method: "POST",
-          url: "http://localhost:5000/api/verifyEmail",
-          headers: {
-            accept: "application/json",
-            "content-type": "application/json",
-            Authorization: "Bearer f38fd6a4-8ff0-47c2-a40c-e94e39fb80c7",
-          },
-          data: {
-            userEmail,
-          },
-        };
+      const userOptions = {
+        method: "POST",
+        url: "http://localhost:5000/api/verifyEmail",
+        headers: {
+          accept: "application/json",
+          "content-type": "application/json",
+          Authorization: "Bearer f38fd6a4-8ff0-47c2-a40c-e94e39fb80c7",
+        },
+        data: {
+          userEmail,
+          mintMethod: {
+              name: 'claimTo',
+              args: {_to: '$WALLET', _quantity: quantity, _tokenId: 0},
+              payment: {currency: 'MATIC', value: priceInEth}
+            },
+        },
+      };
       return userOptions;
-      }
-    // checkpoint 
-    
-    // const userOptions = {
-    //   method: "POST",
-    //   url: "http://localhost:5000/api/verifyEmail",
-    //   headers: {
-    //     accept: "application/json",
-    //     "content-type": "application/json",
-    //     Authorization: "Bearer f38fd6a4-8ff0-47c2-a40c-e94e39fb80c7",
-    //   },
-    //   data: {
-    //     userEmail,
-    //   },
-    // };
-    // return userOptions;
+    } else {
+      const userOptions = {
+        method: "POST",
+        url: "http://localhost:5000/api/verifyEmail",
+        headers: {
+          accept: "application/json",
+          "content-type": "application/json",
+          Authorization: "Bearer f38fd6a4-8ff0-47c2-a40c-e94e39fb80c7",
+        },
+        data: {
+          userEmail,
+        },
+      };
+      return userOptions;
+    }
   }
 
   async function handleCheckout(_email: string): Promise<void> {
@@ -336,5 +321,3 @@ function App() {
 }
 
 export default App;
-
-// MT
