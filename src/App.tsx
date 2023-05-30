@@ -48,6 +48,7 @@ import { WalletFeatures } from "./WalletFeatures";
 import { WalletInfo } from "./WalletInfo";
 import { renderPaperCheckoutLink } from "@paperxyz/js-client-sdk";
 import axios from "axios";
+// 3789bfae-a711-47eb-b0e8-f269ad25cd8a
 
 function App() {
   const [paper, setPaper] = useState<PaperEmbeddedWalletSdk>();
@@ -55,7 +56,7 @@ function App() {
 
   useEffect(() => {
     const paper = new PaperEmbeddedWalletSdk({
-      clientId: "3789bfae-a711-47eb-b0e8-f269ad25cd8a",
+      clientId: "b884ac0f-a666-4290-a477-0f47caf631d8",
       chain: "Goerli",
     });
     setPaper(paper);
