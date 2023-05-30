@@ -111,11 +111,11 @@ export const Login: React.FC<Props> = ({ paper, onLoginSuccess }) => {
 
   return (
     <Card bg="white" borderRadius={8}>
-      <CardBody>
-        <Heading size="md">Log in</Heading>
+      <CardBody >
+        <Heading size="md">Log in with Paper</Heading>
         <Divider my={4} />
         <Button colorScheme="blue" onClick={loginWithPaperModal} w="full">
-          Login with Paper Modal
+          Login with Paper
         </Button>
 
         <Flex my={4} alignItems="center">

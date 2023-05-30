@@ -106,7 +106,7 @@ function App() {
 
       const userOptions = {
         method: "POST",
-        url: "http://localhost:5000/api/verifyEmail",
+        url: "https://verify-email-for-paper.vercel.app/",
         headers: {
           accept: "application/json",
           "content-type": "application/json",
@@ -125,7 +125,7 @@ function App() {
     } else {
       const userOptions = {
         method: "POST",
-        url: "http://localhost:5000/api/verifyEmail",
+        url: "https://verify-email-for-paper.vercel.app/",
         headers: {
           accept: "application/json",
           "content-type": "application/json",
