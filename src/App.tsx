@@ -27,21 +27,27 @@ import {
   Center
 } from "@chakra-ui/react";
 import { HamburgerIcon } from '@chakra-ui/icons'
-import { useDisclosure } from '@chakra-ui/react';
+import { useDisclosure } from "@chakra-ui/react";
 // import { Radio, RadioGroup } from '@chakra-ui/react'
 import {
   GetUser,
   PaperEmbeddedWalletSdk,
   UserStatus,
 } from "@paperxyz/embedded-wallet-service-sdk";
-import { useCallback, useEffect, useState, ChangeEvent, FormEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useState,
+  ChangeEvent,
+  FormEvent,
+} from "react";
 import { CodeSnippet } from "./CodeSnippet";
 import { Login } from "./Login";
 import { UserDetails } from "./snippets/UserDetails";
 import { WalletFeatures } from "./WalletFeatures";
 import { WalletInfo } from "./WalletInfo";
-import { renderPaperCheckoutLink } from "@paperxyz/js-client-sdk"
-import axios from 'axios';
+import { renderPaperCheckoutLink } from "@paperxyz/js-client-sdk";
+import axios from "axios";
 
 function App() {
   const [paper, setPaper] = useState<PaperEmbeddedWalletSdk>();
@@ -77,69 +83,133 @@ function App() {
     console.log("logout response", response);
     await fetchUserStatus();
   };
-  
+
   const [_email, setEmail] = useState("");
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    verifyStudentEmail(_email);
+    // Or you can run the check for the check for the email here too sha
+    //Then you copy and paste this one too after pasting the handle change and handle Checkout function
+    handleCheckout(_email);
   };
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
   };
-  
-  async function verifyStudentEmail(_email: string): Promise<void> {
-  // try {
-  //   const domain: string = _email.split('@')[1];
-  //   console.log(domain);
 
-    // if (domain.endsWith('edu.com')) {
-      console.log('Email domain is a valid .edu domain. Sending request...');
+  function importOptions(userEmail: string, discount: number){
+    // Use this logic to Implement the student and company discount
+    
+    const quantity: number = 1;
+    let priceInEth: number = 0.0 * quantity;
+    if (discount === 20 || discount === 30 ) {
+      priceInEth -= (discount / 100) * priceInEth;
 
-      const options = {
-        method: 'POST',
-        url: 'http://localhost:5000/api/verifyEmail',
+      const userOptions = {
+        method: "POST",
+        url: "http://localhost:5000/api/verifyEmail",
         headers: {
-          accept: 'application/json',
-          'content-type': 'application/json',
-          Authorization: 'Bearer f38fd6a4-8ff0-47c2-a40c-e94e39fb80c7'
+          accept: "application/json",
+          "content-type": "application/json",
+          Authorization: "Bearer f38fd6a4-8ff0-47c2-a40c-e94e39fb80c7",
         },
         data: {
-          _email
-        }
+          userEmail,
+          mintMethod: {
+              name: 'claimTo',
+              args: {_to: '$WALLET', _quantity: quantity, _tokenId: 0},
+              payment: {currency: 'MATIC', value: priceInEth}
+            },
+        },
+      };
+      return userOptions;
+    } else {
+      const userOptions = {
+        method: "POST",
+        url: "http://localhost:5000/api/verifyEmail",
+        headers: {
+          accept: "application/json",
+          "content-type": "application/json",
+          Authorization: "Bearer f38fd6a4-8ff0-47c2-a40c-e94e39fb80c7",
+        },
+        data: {
+          userEmail,
+        },
+      };
+      return userOptions;
     }
-    axios
-    .request(options)
-    .then(function (response) {
-      console.log(response.data);
-      const openCheckout = () => renderPaperCheckoutLink({
-        checkoutLinkUrl: response.data.checkoutLinkIntentUrl,
-      });
-      openCheckout();
-    })
-    .catch(function (error) {
-      console.error(error);
-    })
+  }
 
-    // } else {
-    //   console.log('Email domain is not a valid .edu domain. Request not sent.');
-    //   // Handle the case when the email is not a valid student email
-    // }
-  // } catch (error) {
-  //   console.error('Error occurred during email verification:', error);
-  //   // Handle any errors that occur during the verification process
-  // }
-}
-  const { isOpen, onOpen, onClose } = useDisclosure()
-  const [placement, setPlacement] = useState('right')
-
-
-  
-  
+  async function handleCheckout(_email: string): Promise<void> {
+    let discountValue = 0;
+    const domain: string = _email.split('@')[1];
+    if (domain.endsWith('edu.com')) {
+      console.log('Email domain is a valid student .edu domain. Sending request...');
+      discountValue = 20; // 20% student discount
+        const options = importOptions(_email, discountValue);
+        axios
+        .request(options)
+        .then(function (response) {
+            console.log(response.data);
+            const openCheckout = () =>
+            renderPaperCheckoutLink({
+                checkoutLinkUrl: response.data.checkoutLinkIntentUrl,
+            });
+            openCheckout();
+        })
+        .catch(function (error) {
+            console.error(error);
+        });
+      
+    } else if (domain.endsWith('gmail.com')) {
+      console.log('Email domain is a valid personal domain. Sending request...');
+      // Proceed with request
+      const options = importOptions(_email, discountValue)
+        axios
+        .request(options)
+        .then(function (response) {
+            console.log(response.data);
+            const openCheckout = () =>
+            renderPaperCheckoutLink({
+                checkoutLinkUrl: response.data.checkoutLinkIntentUrl,
+            });
+            openCheckout();
+        })
+        .catch(function (error) {
+            console.error(error);
+        });
+      
+    } else if (domain.endsWith('icloud.com') || domain.endsWith('outlook.com')) {
+        console.log('Email domain is not a valid student or company domain. Request not sent.');
+        // Handle the case when the email is neither a valid student nor a valid company email
+        alert("You're not on the allowlist and cannot buy the NFT.");
+        return; // Stop further processing
+    
+    } else {
+      console.log('Email domain is a valid company domain. Sending request...');
+      // Proceed with request
+      discountValue = 30; // 30% company discount
+      const options = importOptions(_email, discountValue);
+        axios
+        .request(options)
+        .then(function (response) {
+            console.log(response.data);
+            const openCheckout = () =>
+            renderPaperCheckoutLink({
+                checkoutLinkUrl: response.data.checkoutLinkIntentUrl,
+            });
+            openCheckout();
+        })
+        .catch(function (error) {
+            console.error(error);
+        });
+    } 
+    
+  }
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [placement, setPlacement] = useState("right");
 
   return (
     <SimpleGrid columns={1}>
-      
       <Box
         bg="blue.200"
         boxShadow="-2px 0px 2px #6294b4"
@@ -203,7 +273,7 @@ function App() {
 
                 <Center>
                   <Input 
-                    width="60%"
+                    width="85%"
                     type="email"
                     id="email"
                     value={_email}
@@ -212,7 +282,7 @@ function App() {
                     required
                   />
                   <Box m={2}>
-                    <Button type="submit">Submit</Button>
+                    <Button type="submit">Buy</Button>
                   </Box>
                   
                 </Center>
@@ -235,17 +305,16 @@ function App() {
           </SimpleGrid>
           </>
         )}
-        {
-            !!userDetails && userDetails.status !== UserStatus.LOGGED_OUT && (
-            <Button
-              alignSelf="start"
-              onClick={logout}
-              colorScheme="blue"
-              variant="outline"
-            >
-              Logout
-            </Button>
-          )}
+        {!!userDetails && userDetails.status !== UserStatus.LOGGED_OUT && (
+          <Button
+            alignSelf="start"
+            onClick={logout}
+            colorScheme="blue"
+            variant="outline"
+          >
+            Logout
+          </Button>
+        )}
       </Box>
     </SimpleGrid>
   );
